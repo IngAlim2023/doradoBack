@@ -9,4 +9,11 @@ export default class FlightServices{
     async read(){
         return await Flight.all()
     }
+    async info(){
+        return Flight.query().preload('destination',(query)=>{
+            query.select('descripcion')
+        }).preload('airline',(query)=>{
+            query.select('descripcion')
+        })
+    }
 }
