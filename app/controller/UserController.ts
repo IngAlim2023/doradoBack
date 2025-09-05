@@ -49,7 +49,10 @@ export default class UserController {
   }
   async logout({ response }: HttpContext) {
     try {
-      response.clearCookie(String(env.get('COOKIE_NAME')))
+      response.header(
+        'Set-Cookie',
+        `${env.get('COOKIE_NAME')}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`
+      )
       return response.status(200).json({ message: 'Cierre de sesión exitoso' })
     } catch (e) {
       return response.status(500).json({ message: 'Error', error: e.message })
@@ -71,13 +74,27 @@ export default class UserController {
       const tokenDecoded = jwt.decode(token)
       return response.status(200).json({ message: 'Autorizado', data: tokenDecoded })
     } catch (e) {
-      if (e.message === 'jwt malformed')
+      if (e.message === 'jwt malformed') {
+        response.header(
+        'Set-Cookie',
+        `${env.get('COOKIE_NAME')}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`
+      )
         return response.status(400).json({ message: 'Token invalido' })
+      }
       if (e.name === 'TokenExpiredError') {
+        response.header(
+        'Set-Cookie',
+        `${env.get('COOKIE_NAME')}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`
+      )
         return response.status(401).json({ authenticated: false, message: 'Token expirado' })
       }
-      if (e.message === 'invalid signature')
+      if (e.message === 'invalid signature') {
+        response.header(
+        'Set-Cookie',
+        `${env.get('COOKIE_NAME')}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`
+      )
         return response.status(400).json({ message: 'Token invalido error de signature' })
+      }
       return response.status(500).json({ message: 'Error', error: e.message })
     }
   }
