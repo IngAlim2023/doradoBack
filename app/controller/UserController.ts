@@ -57,24 +57,27 @@ export default class UserController {
   }
   async validate({ request, response }: HttpContext) {
     try {
-        const tokenDirty = request.headers().cookie;
-        const token = tokenDirty?.split('auth=').join('');
-        console.log(token)
-        if(!token) return response.status(401).json({ authenticated: false });
-        const decoded = await new Promise((resolve, reject) => {
-            jwt.verify(token, env.get('APP_KEY'), (err, decoded) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(decoded);
-            });
-        });
-        
-        const tokenDecoded = jwt.decode(token)
-      return response.status(200).json({ message: 'Autorizado', data:tokenDecoded })
+      const tokenDirty = request.headers().cookie
+      const token = tokenDirty?.split('auth=').join('')
+      if (!token) return response.status(401).json({ authenticated: false })
+      await new Promise((resolve, reject) => {
+        jwt.verify(token, env.get('APP_KEY'), (err, decoded) => {
+          if (err) {
+            return reject(err)
+          }
+          resolve(decoded)
+        })
+      })
+      const tokenDecoded = jwt.decode(token)
+      return response.status(200).json({ message: 'Autorizado', data: tokenDecoded })
     } catch (e) {
-      if(e.message === 'jwt malformed') return response.status(400).json({ message: 'Token invalido' })
-      if(e.message === 'invalid signature') return response.status(400).json({ message: 'Token invalido error de signature' })
+      if (e.message === 'jwt malformed')
+        return response.status(400).json({ message: 'Token invalido' })
+      if (e.name === 'TokenExpiredError') {
+        return response.status(401).json({ authenticated: false, message: 'Token expirado' })
+      }
+      if (e.message === 'invalid signature')
+        return response.status(400).json({ message: 'Token invalido error de signature' })
       return response.status(500).json({ message: 'Error', error: e.message })
     }
   }
