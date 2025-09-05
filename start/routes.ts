@@ -1,0 +1,5 @@
+import './routes/user.js'
+import './routes/destination.js'
+import './routes/airline.js'
+import './routes/flight.js'
+import './routes/passenger.js'
