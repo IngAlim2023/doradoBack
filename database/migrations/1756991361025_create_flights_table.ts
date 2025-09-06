@@ -7,8 +7,8 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.string('id', 6).notNullable().primary()
       table.string('salaabordaje', 30).notNullable()
-      table.date('horasalida').notNullable()
-      table.date('horallegada').notNullable()
+      table.time('horasalida').notNullable()
+      table.time('horallegada').notNullable()
 
       table.integer('coddestino').notNullable()
       table.integer('codaerolinea').notNullable()

@@ -8,3 +8,9 @@ export interface DataFlight{
     coddestino:number;
     codaerolinea:number;
 }
+
+export interface EditFlight{
+    horasalida:DateTime;
+    horallegada:DateTime;
+    coddestino:number;
+}

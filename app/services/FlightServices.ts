@@ -1,5 +1,5 @@
 import Flight from "#models/flight";
-import { DataFlight } from "../interfaces/flight.js";
+import { DataFlight, EditFlight } from "../interfaces/flight.js";
 
 
 export default class FlightServices{
@@ -8,6 +8,12 @@ export default class FlightServices{
     }
     async read(){
         return await Flight.all()
+    }
+    async update(id:string, data:EditFlight){
+        const flight = await Flight.findOrFail(id);
+        flight.merge(data)
+        await flight.save()
+        return flight
     }
     async info(){
         return Flight.query().preload('destination',(query)=>{

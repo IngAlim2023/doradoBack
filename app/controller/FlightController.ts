@@ -29,6 +29,19 @@ export default class FlightController{
             return response.status(500).json({message:"Error", error:e.message})
         }
     }
+    async updateFlight({params, request, response}:HttpContext){
+        try{
+            const {id} = params;
+
+            const { horasalida, horallegada, coddestino} = request.body()
+
+            const newFlight = await flight.update(id,{ horasalida, horallegada, coddestino})
+
+            return response.status(200).json({message:"Exito", data:newFlight})
+        }catch(e){
+            return response.status(500).json({message:"Error", error:e.message})
+        }
+    }
     async infoFlight({response}:HttpContext){
         try{
             const Flights = await flight.info()
