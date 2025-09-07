@@ -1,27 +1,44 @@
-import PassengerServices from "#services/PassengerServices";
-import type { HttpContext } from "@adonisjs/core/http";
+import PassengerServices from '#services/PassengerServices'
+import type { HttpContext } from '@adonisjs/core/http'
 
+const passe = new PassengerServices()
 
-const passe = new PassengerServices();
+export default class PassengerController {
+  async createPassenger({ request, response }: HttpContext) {
+    try {
+      const { nombres, apellidos, email, telefono, codvuelo } = request.body()
 
-export default class PassengerController{
-    async createPassenger({request, response}:HttpContext){
-        try{
-            const {nombres, apellidos, email, telefono,codvuelo} = request.body()
-
-            const paseenger = await passe.create({nombres, apellidos, email, telefono,codvuelo})
-            return response.status(201).json({message:"Exito", data:paseenger})
-        }catch(e){
-            return response.status(500).json({message:"Error", error:e.message})
-        }
+      const paseenger = await passe.create({ nombres, apellidos, email, telefono, codvuelo })
+      return response.status(201).json({ message: 'Exito', data: paseenger })
+    } catch (e) {
+      return response.status(500).json({ message: 'Error', error: e.message })
     }
-    async readPassengers({ response}:HttpContext){
-        try{
-
-            const paseenger = await passe.read()
-            return response.status(201).json({message:"Exito", data:paseenger})
-        }catch(e){
-            return response.status(500).json({message:"Error", error:e.message})
-        }
+  }
+  async readPassengers({ response }: HttpContext) {
+    try {
+      const paseenger = await passe.read()
+      return response.status(201).json({ message: 'Exito', data: paseenger })
+    } catch (e) {
+      return response.status(500).json({ message: 'Error', error: e.message })
     }
+  }
+  async readPassengersByFlight({ params, response }: HttpContext) {
+    try {
+      const { codvuelo } = params
+
+      const paseenger = await passe.readByFlight(codvuelo)
+      return response.status(201).json({ message: 'Exito', data: paseenger })
+    } catch (e) {
+      return response.status(500).json({ message: 'Error', error: e.message })
+    }
+  }
+  async detelePassengers({ params, response }: HttpContext) {
+    try {
+      const { id } = params
+      await passe.delete(id)
+      return response.status(201).json({ message: 'Exito' })
+    } catch (e) {
+      return response.status(500).json({ message: 'Error', error: e.message })
+    }
+  }
 }

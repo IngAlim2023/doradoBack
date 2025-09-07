@@ -9,4 +9,11 @@ export default class PassengerServices{
     async read(){
         return await Passenger.all()
     }
+    async readByFlight(codvuelo:string){
+        return await Passenger.query().where('codvuelo',codvuelo)
+    }
+    async delete(id:number){
+        const passenger = await Passenger.findOrFail(id)
+        return passenger.delete()
+    }
 }
